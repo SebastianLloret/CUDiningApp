@@ -1,0 +1,26 @@
+
+{
+  "name": "CUDiningApp",
+  "version": "1.0.0",
+  "description": "An API that returns CU Dining Hall Menus",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SebastianLloret/CUDiningApp.git"
+  },
+  "author": "Sebastian Lloret <sebastian@lloret.io>",
+  "license": "GPL3.0",
+  "bugs": {
+    "url": "https://github.com/SebastianLloret/CUDiningApp/issues"
+  },
+  "homepage": "https://github.com/SebastianLloret/CUDiningApp",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cheerio": "^0.22.0",
+    "express": "^4.14.0",
+    "request": "^2.79.0"
+  }
+}
