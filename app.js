@@ -3,34 +3,30 @@
 let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
-let PORT = process.env.PORT || 1337;
-
+let https = require('https');
+let fs = require('fs');
 let scraper = require('./scraper');
 
+let pdfLinks = [];
+
 scraper('https://housing.colorado.edu/dining/menus', (error, result) => {
-  console.log(result);
-})
+  for (let i = 0; i < result.h4Tags.length; i++){
+    let children = result.h4Tags[i.toString()].children;
+    for (let j = 0; j < children.length; j++){
+      if (children[j].attribs){
+      pdfLinks.push(children[j].attribs.href);
+      };
+    };
+  };
 
-app.post('/', (req, res) => {
-  if (!req.body.link) {
-    return res.status(400)
-      .json({
-        'error': 'Bad request.'
-      });
-  }
-
-  scraper(req.body.link, (error, result) => {
-    if (error) {
-      return res.status(400)
-        .json(error);
-    }
-    res.json(result)
-  });
-
+  for(let i = 0; i < pdfLinks.length; i++){
+    let file = fs.createWriteStream("./PDFs/" + pdfLinks[i].split('/files')[1]);
+    let request = https.get(pdfLinks[i], response => {
+      response.pipe(file);
+      console.log("Downloaded " + pdfLinks[i].split('/files')[1])
+      if (i == 1 - pdfLinks.length){
+        process.exit();
+      };
+    });
+  };
 });
-
-app.listen(PORT);
-console.log(`Server listening on port ${PORT}`);

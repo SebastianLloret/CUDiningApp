@@ -1,0 +1,13 @@
+{
+  "name": "g",
+  "version": "1.0.2",
+  "description": "lib",
+  "author": "gavinning",
+  "keywords": "lib",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aimeejs/g.git",
+    "bugs": "https:/github.com/aimeejs/g/issues"
+  },
+  "dependencies": {}
+}

@@ -11,7 +11,7 @@ module.exports = (link, callback) => {
     }
 
     let $ = cheerio.load(body);
-    let pdfLinks = $('h4');
-    return callback(null, {pdfLinks});
+    let h4Tags = $('h4');
+    return callback(null, {h4Tags});
   });
 };
