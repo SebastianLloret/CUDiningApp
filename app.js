@@ -13,7 +13,7 @@ scraper('https://housing.colorado.edu/dining/menus', (error, result) => {
   for (let i = 0; i < result.h4Tags.length; i++){
     let children = result.h4Tags[i.toString()].children;
     for (let j = 0; j < children.length; j++){
-      if (children[j].attribs){
+      if (children[j].attribs && children[j].attribs.href){
       pdfLinks.push(children[j].attribs.href);
       };
     };

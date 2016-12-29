@@ -1,62 +1,40 @@
 import os
 import json
 import textract
+import re
 
-def c4cBreakfast(dictionary):
+def rawImport(dictionary, subdict):
     for file in os.listdir('./PDFs'):
         if file.endswith('.pdf') and 'C4C' and 'Breakfast' in file:
             with open('./PDFs/' + file):
                 rawText = textract.process('./PDFs/' + file)
-                rawText = rawText.replace('BREAKFAST', 'BREAKFAST\n')
-                rawText = rawText.replace('* denotes vegan\n', '')
-                dictionary[file] = rawText
-
-def c4c(dictionary):
-    for file in os.listdir('./PDFs'):
-        if file.endswith('.pdf') and 'C4C' and not 'Breakfast' in file:
-            with open('./PDFs/' + file):
-                rawText = textract.process('./PDFs/' + file)
-                rawText = rawText.replace('* denotes vegan\n', '')
-                rawText = rawText.replace('LUNCH & DINNER MENU\n', '')
-                rawText = rawText.replace('LUNCH MENU\n', '')
-                rawText = rawText.replace('DAILY', '\nDAILY')
-                rawText = rawText.replace('SUSHI', 'DAILY\n')
-                rawText = rawText.replace('DAILY FEATURES', '\nDAILY FEATURES')
-                rawText = rawText.replace('On occasion: Monday-Thursday check out the Chef\'s Showcase', '')
-                rawText = rawText.replace('Closed all day on Fridays, Saturdays and on Jewish holidays', '')
-                rawText = rawText.replace('Closed for Dinner', '')
-                rawText = rawText.replace('Closed all Day on Saturday & Sunday', '')
-                rawText = rawText.replace('Menu is subject to change', '')
-                dictionary[file] = rawText
-
-def sewall(dictionary):
-    for file in os.listdir('./PDFs'):
-        if file.endswith('.pdf') and 'Sewall' in file:
-            with open('./PDFs/' + file):
-                dictionary[file] = textract.process('./PDFs/' + file)
-
-def ve(dictionary):
-    for file in os.listdir('./PDFs'):
-        if file.endswith('.pdf') and 'VE' in file:
-            with open('./PDFs/' + file):
-                dictionary[file] = textract.process('./PDFs/' + file)
-
-def firstPass(rawDictionary, key):
-    for text in rawDictionary[key]:
-        rawDictionary[key][text] = rawDictionary[key][text].split('\n\n')
-        print rawDictionary[key][text]
-
+                rawText = rawText.replace('\xc3\xa2\xe2\x82\xac\xe2\x84\xa2', '\'')
+                rawText = rawText.replace('* denotes vegan', '')
+                rawText = rawText.replace(': ', ': \n')
+                rawText = rawText.rstrip()
+                rawText = rawText.replace('\n\n', '\n')
+                dictionary[subdict][file] = re.split(',|\n', rawText)
+                print dictionary[subdict][file]
 
 if __name__ == '__main__':
     rawDictionary = {
-        'c4cRawTextList':{},
-        'c4cRawBreakfastTextList':{},
-        'sewallRawTextList':{},
-        'veRawTextList':{},
+        'c4c':{},
+        'c4cBreakfast':{},
+        'sewall':{},
+        've':{},
     }
 
-    c4cBreakfast(rawDictionary['c4cRawBreakfastTextList'])
-    firstPass(rawDictionary, 'c4cRawBreakfastTextList')
+    c4cBreakfastDictionary = {
+        'blackcoats':{},
+        'italy':{},
+        'wholesomefields':{},
+        'asia':{},
+        'latin':{},
+        'dessert':{},
+    }
 
-    c4c(rawDictionary['c4cRawTextList'])
-    firstPass(rawDictionary, 'c4cRawTextList')
+    c4cstations = ['BLACK COATS', 'ITALY', 'WHOLESOME FIELDS', 'ASIA', 'LATIN', 'DESSERT']
+    days = ['Daily: ', 'Monday: ', 'Tuesday: ', 'Wednesday: ', 'Thursday: ', 'Friday: ', 'Saturday: ', 'Sunday: ', 'Saturday & Sunday: ']
+    meals = ['BREAKFAST']
+
+    rawImport(rawDictionary, 'c4cBreakfast')
