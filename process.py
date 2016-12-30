@@ -10,11 +10,24 @@ def rawImport(dictionary, subdict):
                 rawText = textract.process('./PDFs/' + file)
                 rawText = rawText.replace('\xc3\xa2\xe2\x82\xac\xe2\x84\xa2', '\'')
                 rawText = rawText.replace('* denotes vegan', '')
-                rawText = rawText.replace(': ', ': \n')
-                rawText = rawText.rstrip()
+                rawText = rawText.replace(': ', ':\n')
                 rawText = rawText.replace('\n\n', '\n')
-                dictionary[subdict][file] = re.split(',|\n', rawText)
-                print dictionary[subdict][file]
+                rawText = rawText.rstrip()
+                rawText = re.sub('(,[^\r\n]*?)[\r\n](?=[^\r\n]+?,)', r'\1 ', rawText, re.MULTILINE)
+                dictionary[subdict][file] = rawText
+                dictionary[subdict][file] = dictionary[subdict][file].split('\n')
+
+def processc4cBreakfast():
+    for pdf in rawDictionary['c4cBreakfast']:
+        lst = rawDictionary['c4cBreakfast'][pdf]
+        for i in xrange(0, len(c4cstations)):
+            name = c4cstations[i].replace(' ', '')
+            name = name.lower()
+            if i < len(c4cstations) - 1:
+                c4cBreakfastDictionary[name][pdf] = lst[lst.index(c4cstations[i]) + 1:lst.index(c4cstations[i+1])]
+            else:
+                c4cBreakfastDictionary[name][pdf] = lst[lst.index(c4cstations[i]) + 1:]
+        print c4cBreakfastDictionary
 
 if __name__ == '__main__':
     rawDictionary = {
@@ -34,7 +47,8 @@ if __name__ == '__main__':
     }
 
     c4cstations = ['BLACK COATS', 'ITALY', 'WHOLESOME FIELDS', 'ASIA', 'LATIN', 'DESSERT']
-    days = ['Daily: ', 'Monday: ', 'Tuesday: ', 'Wednesday: ', 'Thursday: ', 'Friday: ', 'Saturday: ', 'Sunday: ', 'Saturday & Sunday: ']
+    days = ['Daily:', 'Monday:', 'Tuesday:', 'Wednesday:', 'Thursday:', 'Friday:', 'Saturday:', 'Sunday:', 'Saturday & Sunday:']
     meals = ['BREAKFAST']
 
     rawImport(rawDictionary, 'c4cBreakfast')
+    processc4cBreakfast()
